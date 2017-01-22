@@ -4,6 +4,21 @@
 var fs = require('fs');
 var path = require('path');
 var LastfmAPI = require('lastfmapi');
+
+/*
+Start script checking for updates to input file,
+expecting live audio data from Rivendell of the form:
+`[artist] --- [track]`
+
+Will scrobble new updates to Last.fm with api data from passwords.json:
+{
+	"lastfm_user": "...",
+	"lastfm_password": "...",
+    "lastfm_api_key" : "...",
+    "lastfm_secret" : "..."
+}
+*/
+
 var passwords = require('./passwords.json');
 
 var lfm = new LastfmAPI({
@@ -15,6 +30,9 @@ var lastTimestamp = null;
 var storePath = path.resolve(__dirname, "store.json");
 var scrobbleHistoryLocation = path.resolve(__dirname, "scrobbleHistory.txt");
 
+/*
+Creates a Last.fm session and executes callback within that session
+*/
 function authenticateSession(callback) {
 	lfm.auth.getMobileSession(passwords.lastfm_user, passwords.lastfm_password, function(err, session) {
 		if (err) {
@@ -25,6 +43,10 @@ function authenticateSession(callback) {
 	});
 }
 
+/*
+Scrobble a track on Last.fm
+Should be executed within a valid session
+*/
 function scrobble(artist, track, timestamp) {
 	lfm.track.scrobble({
 		'artist' : artist,
@@ -36,12 +58,17 @@ function scrobble(artist, track, timestamp) {
 	});
 }
 
+
+/*
+Set up: write persistent store file if it doesn't exist 
+*/
 if (!fs.existsSync(storePath)) {
 	console.log("writing empty store...");
 	fs.writeFile(storePath, "{}", 'utf8');
 }
 
-// update scrobbles history file with live info file
+// start script with file from command `node app.js [/path/to/audio.txt]`
+// read audio file every 5 seconds, scrobble if updated
 var file = process.argv[2];
 setInterval(function() {
 	console.log("checking for new audio data...");
