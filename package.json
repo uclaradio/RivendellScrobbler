@@ -1,0 +1,14 @@
+{
+  "name": "rivendellscrobbler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "UCLA Student Media",
+  "license": "MIT",
+  "dependencies": {
+    "lastfmapi": "^0.1.1"
+  }
+}
