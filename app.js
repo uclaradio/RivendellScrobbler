@@ -93,7 +93,7 @@ setInterval(function() {
 						if (artist && track) {
 							artist = artist.trim();
 							track = track.trim();
-							if (store.artist !== artist || store.track !== track) {
+							if (artist && track && (store.artist !== artist || store.track !== track)) {
 								// new track -> scrobble & save!
 								authenticateSession(function() {
 									console.log(new Date().toLocaleString(), 'found a new track to scrobble:', artist, '---', track);
